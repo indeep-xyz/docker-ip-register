@@ -1,9 +1,8 @@
 docker-ip-register
 ====
 
-this script assist to setup network of Docker containers.
-
-concretely, the relation with IP address and name in the running Docker containers that register in the Unbound configuration file.
+this script assist to setup network of Docker containers.  
+register 'local-data' records in the Unbound configuration file. registration records are from the running Docker containers.
 
 this script is dependent with some environment. so read the script before run and if require then rewrite parameters. this script is very simple and easy.
 
@@ -38,12 +37,24 @@ add records or replace same name records.
 
 hostname format is _Docker container's name_ + _suffix_ . default suffix is _.mydocker_ .
 
-#### check
-
-if you want check registered hostname then type following in a command.
+#### help
 
 ```
-ping -c1 {ConatainerName}.mydocker
+# ./docker-ip-register.sh -h
+
+$MY_NAME [option] [search_term]
+
+this script assist to setup network of Docker containers.
+register 'local-data' records in the Unbound configuration file. registration records are from the running Docker containers.
+
+[search_term]
+  if passed, echo record that searched from configuration file.
+  if not passed, update configuration file.
+
+[option]
+  -c  echo path of configuration file and exit.
+  -r  reset configuration file.
+  -s  echo suffix string and exit.
 ```
 
 ### install
