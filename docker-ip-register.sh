@@ -17,17 +17,17 @@ do
     h) cat <<EOT
 $MY_NAME [option] [search_term]
 
-this script assist to setup network of Docker containers.
-register 'local-data' records in the Unbound configuration file. registration records are from the running Docker containers.
+This script assist to setup network of Docker containers.
+It registers 'local-data' records to the Unbound configuration file.
 
 [search_term]
-  if passed, echo record that searched from configuration file.
-  if not passed, update configuration file.
+  If exists, echo record filtered by the term from the configuration file.
+  If not exists, update the configuration file.
 
 [option]
-  -c  echo path of configuration file and exit.
-  -r  reset configuration file.
-  -s  echo suffix string and exit.
+  -c  Echo path of the configuration file.
+  -r  Reset the configuration file.
+  -s  Echo suffix string of the registering domain name.
 EOT
        exit 0;;
   esac
@@ -36,8 +36,12 @@ done
 shift `expr $OPTIND - 1`
 
 # - - - - - - - - - - - - - - - - - - -
-# function
+# functions
 
+# = =
+# Update Unbound configuration file.
+# The registration data are automatically gotten
+# from the running docker containers.
 update() {
   for name in `docker ps | awk 'NR > 1 { print $NF }'`
   do
@@ -52,39 +56,7 @@ update() {
 }
 
 # = =
-# echo Unbound records by hostname string
-#
-# args
-# $1 ... hostname
-echo_by_hostname() {
-
-  hostname="`echo "$1" | sed 's/\./\\\\./g'`"
-
-  while read conf;
-  do
-    echo $conf | sed -n "/^local-data:.*\"[^ ]*$hostname[^ ]* /p"
-  done < "$CONF_PATH"
-}
-
-# = =
-# echo Unbound records by IP address string
-#
-# args
-# $1 ... IP address
-echo_by_ip() {
-
-  ip="`echo "$1" | sed 's/\./\\\\./g'`"
-
-  while read conf;
-  do
-    echo $conf | sed -n "/^local-data:.* [^ ]*$ip[^ ]*\"/p"
-  done < "$CONF_PATH"
-}
-
-# = =
-# echo IP-address of the running docker bridge
-#
-# args
+# Echo IP-address of the running docker bridge.
 echo_bridge_ip() {
   if type ip > /dev/null 2>&1; then
     ip -f inet addr show dev docker0 \
@@ -96,8 +68,8 @@ echo_bridge_ip() {
 }
 
 # = =
-# echo header of a configuration setting for Unbound
-echo_unbound_config() {
+# Echo header of configuration setting for Unbound.
+echo_initial_config() {
   local IP=`echo_bridge_ip`
   cat <<EOT
 server:
@@ -106,6 +78,34 @@ access-control: 172.17.0.0/16 allow
 do-ip6: no
 local-zone: "${SUFFIX}." static
 EOT
+}
+
+# = =
+# Echo Unbound records filtered by hostname.
+#
+# args
+# $1 ... hostname
+echo_records_by_hostname() {
+  hostname="`echo "$1" | sed 's/\./\\\\./g'`"
+
+  while read conf;
+  do
+    echo $conf | sed -n "/^local-data:.*\"[^ ]*$hostname[^ ]* /p"
+  done < "$CONF_PATH"
+}
+
+# = =
+# Echo Unbound records filtered by IP-address.
+#
+# args
+# $1 ... IP-address
+echo_records_by_ip() {
+  ip="`echo "$1" | sed 's/\./\\\\./g'`"
+
+  while read conf;
+  do
+    echo $conf | sed -n "/^local-data:.* [^ ]*$ip[^ ]*\"/p"
+  done < "$CONF_PATH"
 }
 
 # - - - - - - - - - - - - - - - - - - -
@@ -126,7 +126,7 @@ fi
 
 # if not exists, initialize Unbound Configuration file
 if [ ! -f "$CONF_PATH" ]; then
-  echo_unbound_config > "$CONF_PATH"
+  echo_initial_config > "$CONF_PATH"
 fi
 
 # - - - - - - - - - - - - - - - - - - -
@@ -134,20 +134,12 @@ fi
 
 # check argument
 if [ -z "$1" ]; then
-
-  # if none, update configuration file
+  # if nothing, update configuration file
   update
 
-# check argument
+# check argument => /[0-9.]/
 elif [ -z "`echo "$1" | sed 's/[0-9\.]//g'`" ]; then
-
-  # if [0-9.] only
-  # - echo configuration data by IP address
-  echo_by_ip "$1"
+  echo_records_by_ip "$1"
 else
-
-  # if not [0-9.] only
-  # - echo configuration data by hostname
-  echo_by_hostname "$1"
+  echo_records_by_hostname "$1"
 fi
-
