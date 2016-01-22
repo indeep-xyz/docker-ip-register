@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MY_VERSION=1.2
+MY_VERSION=1.2.1
 MY_NAME=docker-ip-register
 SUFFIX=mydocker
 CONF_PATH=/etc/unbound/unbound.conf.d/mydocker.conf
@@ -33,6 +33,7 @@ It registers 'local-data' records to the Unbound configuration file.
   -r  Reset the configuration file.
   -s  Set suffix of the registering hostname.
   -S  Echo suffix of the registering hostname.
+  -v  Echo my version.
 EOT
        exit 0;;
   esac
