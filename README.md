@@ -30,7 +30,7 @@ The default file path managed by docker-ip-register is "/etc/unbound/unbound.con
 USE
 ----
 
-### run
+### Run
 
 ~~~shell
 ./docker-ip-register.sh
@@ -40,7 +40,7 @@ Add new records or rewrite records when you run.
 
 The format of hostname is a name of Docker container + suffix. The default suffix in this tool is "_.mydocker_".
 
-#### help
+#### Help
 
 ~~~
 # ./docker-ip-register.sh -h
@@ -63,7 +63,7 @@ It registers 'local-data' records to the Unbound configuration file.
   -v  Echo my version.
 ~~~
 
-### install
+### Install
 
 ~~~shell
 cp docker-ip-register.sh /usr/local/bin/docker-ip-register
@@ -89,7 +89,7 @@ docker run -d \
 
 ### Lazy execution
 
-You should excute lazily this script in case of that you make a container run in foreground.
+You should execute lazily docker-ip-register in case of that you resolve the container's hostname by Unbound server running in Docker host　while you make a container run in foreground.
 
 ~~~shell
 # docker-ip-register executes in background
