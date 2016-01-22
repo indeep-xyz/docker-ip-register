@@ -20,19 +20,19 @@ do
     h) cat <<EOT
 $MY_NAME [option] [search_term]
 
-This script assist to setup network of Docker containers.
+This script assists to setup network of Docker containers.
 It registers 'local-data' records to the Unbound configuration file.
 
 [search_term]
-  If exists, echo record filtered by the term from the configuration file.
+  If exists, echo records filtered by the term from the configuration file.
   If not exists, update the configuration file.
 
 [option]
   -c  Set path of the configuration file.
   -C  Echo path of the configuration file.
   -r  Reset the configuration file.
-  -s  Set suffix string of the registering domain name.
-  -S  Echo suffix string of the registering domain name.
+  -s  Set suffix of the registering hostname.
+  -S  Echo suffix of the registering hostname.
 EOT
        exit 0;;
   esac
@@ -44,7 +44,7 @@ shift `expr $OPTIND - 1`
 # functions
 
 # = =
-# Update Unbound configuration file.
+# Update the configuration file for Unbound.
 # The registration data are automatically gotten
 # from the running docker containers.
 update() {
@@ -61,7 +61,7 @@ update() {
 }
 
 # = =
-# Echo IP-address of the running docker bridge.
+# Echo IP-address of the running Docker bridge.
 echo_bridge_ip() {
   if type ip > /dev/null 2>&1; then
     ip -f inet addr show dev docker0 \
@@ -73,12 +73,12 @@ echo_bridge_ip() {
 }
 
 # = =
-# Echo header of configuration setting for Unbound.
+# Echo initial setting of the configuration file for Unbound.
 echo_initial_config() {
-  local IP=`echo_bridge_ip`
+  local bridge_ip=`echo_bridge_ip`
   cat <<EOT
 server:
-interface: $IP
+interface: $bridge_ip
 access-control: 172.17.0.0/16 allow
 do-ip6: no
 local-zone: "${SUFFIX}." static
@@ -86,7 +86,8 @@ EOT
 }
 
 # = =
-# Echo Unbound records filtered by hostname.
+# Echo the current records filtered by hostname
+# in the configuration file for Unbound.
 #
 # args
 # $1 ... hostname
@@ -100,7 +101,8 @@ echo_records_by_hostname() {
 }
 
 # = =
-# Echo Unbound records filtered by IP-address.
+# Echo the current records filtered by IP-address
+# in the configuration file for Unbound.
 #
 # args
 # $1 ... IP-address
