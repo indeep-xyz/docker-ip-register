@@ -1,6 +1,6 @@
 #!/bin/bash
 
-MY_VERSION=1.1
+MY_VERSION=1.2
 MY_NAME=docker-ip-register
 SUFFIX=mydocker
 CONF_PATH=/etc/unbound/unbound.conf.d/mydocker.conf
