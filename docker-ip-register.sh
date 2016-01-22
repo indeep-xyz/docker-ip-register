@@ -81,19 +81,39 @@ echo_by_ip() {
   done < "$CONF_PATH"
 }
 
+# = =
+# echo IP-address of the running docker bridge
+#
+# args
+echo_bridge_ip() {
+  if type ip > /dev/null 2>&1; then
+    ip -f inet addr show dev docker0 \
+        | sed -nr 's|^ *inet ([0-9.]+).*|\1|p'
+  else
+    ifconfig docker0 \
+        | sed -nr 's|^ *inet addr:([0-9.]+).*|\1|p'
+  fi
+}
+
+# = =
+# echo header of a configuration setting for Unbound
+echo_unbound_config() {
+  local IP=`echo_bridge_ip`
+  cat <<EOT
+server:
+interface: $IP
+access-control: 172.17.0.0/16 allow
+do-ip6: no
+local-zone: "${SUFFIX}." static
+EOT
+}
+
 # - - - - - - - - - - - - - - - - - - -
 # initialize
 
 # if not exists, initialize Unbound Configuration file
 if [ ! -f "$CONF_PATH" ]; then
-  cat <<EOT > "$CONF_PATH"
-server:
-interface: 172.17.42.1
-access-control: 172.17.0.0/16 allow
-do-ip6: no
-local-zone: "${SUFFIX}." static
-
-EOT
+  echo_unbound_config > "$CONF_PATH"
 fi
 
 # - - - - - - - - - - - - - - - - - - -
