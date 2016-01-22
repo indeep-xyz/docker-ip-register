@@ -3,9 +3,9 @@ docker-ip-register
 
 This script assists to setup network of Docker containers.
 
-It registers 'local-data' records to the Unbound configuration file. The registration records are gotten from the running Docker containers.
+It registers 'local-data' records to the Unbound configuration file. The source of registration records is gotten IP-addresses and container names from the running containers.
 
-It has some options. Before you run, read it and rewrite parameters when you need. This script is very simple.
+It has some options. Before you run, read it and rewrite parameters if you need. This script is simple.
 
 REQUIREMENT
 ----
@@ -36,9 +36,9 @@ USE
 ./docker-ip-register.sh
 ~~~
 
-Add new records or replace records.
+Add new records or rewrite records when you run.
 
-The format of hostname is _a name of Docker container_ + _suffix_. default suffix is _.mydocker_.
+The format of hostname is a name of Docker container + suffix. The default suffix in this tool is "_.mydocker_".
 
 #### help
 
@@ -70,12 +70,14 @@ cp docker-ip-register.sh /usr/local/bin/docker-ip-register
 chown root:root /usr/local/bin/docker-ip-register
 ~~~
 
-The installation is just to copy to _/usr/local/bin/_. If you want uninstall then remove it.
+The installation is just to copy into _/usr/local/bin_ directory. If you want uninstall then remove it.
 
 tips
 ----
 
-### For docker container
+### Run docker container
+
+The command options at `docker run` is the following when Unbound server runs in Docker host.
 
 ~~~shell
 docker run -d \
@@ -83,7 +85,7 @@ docker run -d \
   --name $CONTAINER_NAME $IMAGE_NAME
 ~~~
 
-- _172.17.0.1_ is a default IP-address of _docker0_.
+- _172.17.0.1_ is a default IP-address of Docker's bridge network (_docker0_).
 
 ### Lazy execution
 
