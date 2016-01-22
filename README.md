@@ -1,95 +1,96 @@
 docker-ip-register
 ====
 
-this script assist to setup network of Docker containers.  
-register 'local-data' records in the Unbound configuration file. registration records are from the running Docker containers.
+This script assists to setup network of Docker containers.
 
-this script is dependent with some environment. so read the script before run and if require then rewrite parameters. this script is very simple and easy.
+It registers 'local-data' records to the Unbound configuration file. The registration records are gotten from the running Docker containers.
 
-## REQUIREMENT
+It has some options. Before you run, read it and rewrite parameters when you need. This script is very simple.
 
-- Unbound service is running
-- Unbound configuration file is enabled
-- Docker container is running greater than or equal to one
+REQUIREMENT
+----
 
-### enable to Unbound configuration file
+- Unbound service is running.
+- Some Docker containers are running.
+- A running user has the authenfication as root.
 
-require to load _/etc/unbound/unbound.conf.d/mydocker.conf_ by Unbound daemon.
+### Enable to load the configuration file for Unbound
 
-normally, this item has been set.
+Unbound daemon must be able to load the file. You may need to set a line the following to the main file.
 
-```
+~~~
 # /etc/unbound/unbound.conf
 ...
 include: "/etc/unbound/unbound.conf.d/*.conf"
 ...
-```
+~~~
 
-## USE
+The default file path managed by docker-ip-register is "/etc/unbound/unbound.conf.d/mydocker.conf".
+
+USE
+----
 
 ### run
 
-```
+~~~shell
 ./docker-ip-register.sh
-```
+~~~
 
-add records or replace same name records.
+Add new records or replace records.
 
-hostname format is _Docker container's name_ + _suffix_ . default suffix is _.mydocker_ .
+The format of hostname is _a name of Docker container_ + _suffix_. default suffix is _.mydocker_.
 
 #### help
 
-```
+~~~
 # ./docker-ip-register.sh -h
 
 $MY_NAME [option] [search_term]
 
-this script assist to setup network of Docker containers.
-register 'local-data' records in the Unbound configuration file. registration records are from the running Docker containers.
+This script assists to setup network of Docker containers.
+It registers 'local-data' records to the Unbound configuration file.
 
 [search_term]
-  if passed, echo record that searched from configuration file.
-  if not passed, update configuration file.
+  If exists, echo records filtered by the term from the configuration file.
+  If not exists, update the configuration file.
 
 [option]
-  -c  echo path of configuration file and exit.
-  -r  reset configuration file.
-  -s  echo suffix string and exit.
-```
+  -c  Set path of the configuration file.
+  -C  Echo path of the configuration file.
+  -r  Reset the configuration file.
+  -s  Set suffix of the registering hostname.
+  -S  Echo suffix of the registering hostname.
+  -v  Echo my version.
+~~~
 
 ### install
 
-```
-./install.sh
+~~~shell
+cp docker-ip-register.sh /usr/local/bin/docker-ip-register
+chown root:root /usr/local/bin/docker-ip-register
+~~~
 
-cd anywhere
-docker-ip-register
-```
+The installation is just to copy to _/usr/local/bin/_. If you want uninstall then remove it.
 
-`install.sh` is copy to _/usr/local/bin/_. if you want uninstall then remove it.
+tips
+----
 
-## tips
+### For docker container
 
-### use in docker container
-
-#### unbound.conf.d/mydocker.conf
-
-- Unbound service is running in Docker host.
-- _172.17.42.1_ is default value of _docker0_ 's IP address.
-- set to `--dns` option
-
-```
-docker run \
-  --dns 172.17.42.1 \
+~~~shell
+docker run -d \
+  --dns 172.17.0.1 \
   --name $CONTAINER_NAME $IMAGE_NAME
-```
+~~~
 
-### use in foreground
+- _172.17.0.1_ is a default IP-address of _docker0_.
 
-when process of Docker container is running in the foreground, if want to use the newly Unbound settings by `docker-ip-register` then run as following in the shell script.
+### Lazy execution
 
-```
-# late-running to `docker-ip-register` in background
+You should excute lazily this script in case of that you make a container run in foreground.
+
+~~~shell
+# docker-ip-register executes in background
 (
   sleep 3
   docker-ip-register >/dev/null
@@ -97,10 +98,11 @@ when process of Docker container is running in the foreground, if want to use th
 
 # docker run
 docker run -i -t \
-  --dns 172.17.42.1 \
+  --dns 172.17.0.1 \
   --name $CONTAINER_NAME $CONT_IMAGE
-```
+~~~
 
-## AUTHOR
+AUTHOR
+----
 
 [indeep-xyz](http://indeep.xyz/)
