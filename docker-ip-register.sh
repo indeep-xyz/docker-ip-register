@@ -8,12 +8,15 @@ CONF_PATH=/etc/unbound/unbound.conf.d/mydocker.conf
 # - - - - - - - - - - - - - - - - - - -
 # command option
 
-while getopts csrh OPT
+while getopts c:Cs:Srvh OPT
 do
   case $OPT in
-    c) echo "$CONF_PATH"; exit 0;;
-    s) echo "$SUFFIX"; exit 0;;
+    c) CONF_PATH="$OPTARG";;
+    C) echo "$CONF_PATH"; exit 0;;
+    s) SUFFIX="$OPTARG";;
+    S) echo "$SUFFIX"; exit 0;;
     r) rm "$CONF_PATH";;
+    v) echo "$MY_NAME (version $MY_VERSION)"; exit 0;;
     h) cat <<EOT
 $MY_NAME [option] [search_term]
 
@@ -25,9 +28,11 @@ It registers 'local-data' records to the Unbound configuration file.
   If not exists, update the configuration file.
 
 [option]
-  -c  Echo path of the configuration file.
+  -c  Set path of the configuration file.
+  -C  Echo path of the configuration file.
   -r  Reset the configuration file.
-  -s  Echo suffix string of the registering domain name.
+  -s  Set suffix string of the registering domain name.
+  -S  Echo suffix string of the registering domain name.
 EOT
        exit 0;;
   esac
