@@ -3,9 +3,7 @@ docker-ip-register
 
 Docker コンテナのネットワーク設定をサポートするツールです。
 
-起動中の Docker コンテナから得た IP アドレスとコンテナ名を紐付けて、Unbound の 'local-data' の設定を追加します。
-
-いくつか独自の設定があるので、必要があればスクリプト中のパラメータを書き換えてください。
+起動中の Docker コンテナから得た IP アドレスとコンテナ名を紐付けて、Unbound の 'local-data' の設定を追加します。環境依存の設定がいくつかあるので、必要があればスクリプト中のパラメータを書き換えてください。
 
 REQUIREMENT
 ----
@@ -27,10 +25,10 @@ include: "/etc/unbound/unbound.conf.d/*.conf"
 
 ちなみに、このツールが用いる標準の設定ファイルのパスは _/etc/unbound/unbound.conf.d/mydocker.conf_ です。
 
-USE
+USAGE
 ----
 
-### run
+### Run
 
 ~~~shell
 ./docker-ip-register.sh
@@ -40,7 +38,7 @@ USE
 
 各レコードのホスト名は Docker のコンテナ名と接尾辞を繋げたものです。標準の接尾辞は _.mydocker_ です.
 
-#### help
+#### Help
 
 ~~~
 # ./docker-ip-register.sh -h
@@ -63,7 +61,7 @@ It registers 'local-data' records to the Unbound configuration file.
   -v  Echo my version.
 ~~~
 
-### install
+### Install
 
 ~~~shell
 cp docker-ip-register.sh /usr/local/bin/docker-ip-register
@@ -72,7 +70,7 @@ chown root:root /usr/local/bin/docker-ip-register
 
 インストールは _/usr/local/bin_ 内にコピーして権限を与えるだけです。アンインストール時はそれを削除するだけです。
 
-tips
+TIPS
 ----
 
 ### Docker コンテナの起動時
