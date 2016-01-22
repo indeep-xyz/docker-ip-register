@@ -27,7 +27,7 @@ include: "/etc/unbound/unbound.conf.d/*.conf"
 
 The default file path managed by docker-ip-register is "/etc/unbound/unbound.conf.d/mydocker.conf".
 
-USE
+USAGE
 ----
 
 ### Run
@@ -72,7 +72,7 @@ chown root:root /usr/local/bin/docker-ip-register
 
 The installation is just to copy into _/usr/local/bin_ directory. If you want uninstall then remove it.
 
-tips
+TIPS
 ----
 
 ### Run docker container
