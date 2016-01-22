@@ -109,6 +109,19 @@ EOT
 }
 
 # - - - - - - - - - - - - - - - - - - -
+# guard
+
+if ! type unbound > /dev/null 2>&1; then
+  echo 'Can not find Unbound command'
+  exit 1
+fi
+
+if [ ! -d `dirname "$CONF_PATH"` ]; then
+  echo 'Does not exist a configuration directory for Unbound'
+  exit 1
+fi
+
+# - - - - - - - - - - - - - - - - - - -
 # initialize
 
 # if not exists, initialize Unbound Configuration file
